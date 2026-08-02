@@ -1,4 +1,4 @@
-function TaskList({ tasks, onToggleComplete, onDelete }) {
+function TaskList({ tasks, onToggleComplete, onDelete, onEdit }) {
   if (tasks.length === 0) {
     return <p className="text-slate-400">No tasks yet. Add one above!</p>
   }
@@ -24,7 +24,7 @@ function TaskList({ tasks, onToggleComplete, onDelete }) {
               onChange={() => onToggleComplete(task)}
               className="w-5 h-5"
             />
-            <div>
+            <div onClick={() => onEdit(task)} className="cursor-pointer">
               <p
                 className={`text-white ${
                   task.status === 'completed' ? 'line-through text-slate-500' : ''

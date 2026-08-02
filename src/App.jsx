@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useAuth } from './context/AuthContext'
 import { useTasks } from './hooks/useTasks'
 import Login from './pages/Login'
@@ -7,6 +8,7 @@ import TaskList from './components/tasks/TaskList'
 function App() {
   const { user, signOut } = useAuth()
   const { tasks, loading, addTask, updateTask, deleteTask } = useTasks()
+  const [editingTask, setEditingTask] = useState(null)
 
   if (!user) {
     return <Login />
@@ -16,6 +18,16 @@ function App() {
     updateTask(task.id, {
       status: task.status === 'completed' ? 'pending' : 'completed',
     })
+  }
+
+  async function handleFormSubmit(taskData, taskId) {
+    if (taskId) {
+      const result = await updateTask(taskId, taskData)
+      setEditingTask(null)
+      return result
+    } else {
+      return await addTask(taskData)
+    }
   }
 
   return (
@@ -31,7 +43,11 @@ function App() {
           </button>
         </div>
 
-        <TaskForm onSubmit={addTask} />
+        <TaskForm
+          onSubmit={handleFormSubmit}
+          editingTask={editingTask}
+          onCancelEdit={() => setEditingTask(null)}
+        />
 
         {loading ? (
           <p className="text-slate-400">Loading tasks...</p>
@@ -40,6 +56,7 @@ function App() {
             tasks={tasks}
             onToggleComplete={handleToggleComplete}
             onDelete={deleteTask}
+            onEdit={setEditingTask}
           />
         )}
       </div>
