@@ -1,9 +1,22 @@
+import { useAuth } from './context/AuthContext'
+import Login from './pages/Login'
+
 function App() {
+  const { user, signOut } = useAuth()
+
+  if (!user) {
+    return <Login />
+  }
+
   return (
-    <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-      <h1 className="text-4xl font-bold text-white">
-        Vasco Daily Task Reminder
-      </h1>
+    <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center text-white gap-4">
+      <p>Logged in as: {user.email}</p>
+      <button
+        onClick={signOut}
+        className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded"
+      >
+        Log Out
+      </button>
     </div>
   )
 }
