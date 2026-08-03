@@ -4,6 +4,7 @@ import { useTasks } from './hooks/useTasks'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import Tasks from './pages/Tasks'
+import Calendar from './pages/Calendar'
 import Nav from './components/layout/Nav'
 
 function App() {
@@ -47,7 +48,14 @@ function App() {
               />
             )}
             {page === 'calendar' && (
-              <p className="text-slate-400">Calendar coming next...</p>
+              <Calendar
+                occurrences={occurrences}
+                onToggleComplete={toggleOccurrence}
+                onDelete={deleteTask}
+                onEdit={(task) => {
+                  setPage('tasks')
+                }}
+              />
             )}
           </>
         )}
