@@ -3,6 +3,7 @@ function Nav({ currentPage, onNavigate }) {
     { key: 'dashboard', label: 'Dashboard' },
     { key: 'tasks', label: 'Tasks' },
     { key: 'calendar', label: 'Calendar' },
+    { key: 'settings', label: 'Settings' },
   ]
 
   return (
