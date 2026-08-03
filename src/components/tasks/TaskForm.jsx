@@ -1,6 +1,16 @@
 import { useState, useEffect } from 'react'
 import { useCategories } from '../../hooks/useCategories'
 
+const REMINDER_OPTIONS = [
+  { label: 'At task time', minutes: 0 },
+  { label: '5 minutes before', minutes: 5 },
+  { label: '10 minutes before', minutes: 10 },
+  { label: '15 minutes before', minutes: 15 },
+  { label: '30 minutes before', minutes: 30 },
+  { label: '1 hour before', minutes: 60 },
+  { label: '1 day before', minutes: 1440 },
+]
+
 function TaskForm({ onSubmit, editingTask, onCancelEdit }) {
   const { categories } = useCategories()
   const [title, setTitle] = useState('')
@@ -11,6 +21,7 @@ function TaskForm({ onSubmit, editingTask, onCancelEdit }) {
   const [categoryId, setCategoryId] = useState('')
   const [recurrence, setRecurrence] = useState('none')
   const [customDays, setCustomDays] = useState([])
+  const [selectedReminders, setSelectedReminders] = useState([])
 
   useEffect(() => {
     if (editingTask) {
@@ -20,6 +31,7 @@ function TaskForm({ onSubmit, editingTask, onCancelEdit }) {
       setStartTime(editingTask.start_time || '')
       setPriority(editingTask.priority || 'medium')
       setCategoryId(editingTask.category_id || '')
+      setSelectedReminders(editingTask.reminderMinutes || [])
 
       if (editingTask.recurrence_rule) {
         const rule = editingTask.recurrence_rule
@@ -44,11 +56,18 @@ function TaskForm({ onSubmit, editingTask, onCancelEdit }) {
     setCategoryId('')
     setRecurrence('none')
     setCustomDays([])
+    setSelectedReminders([])
   }
 
   function toggleDay(day) {
     setCustomDays((prev) =>
       prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]
+    )
+  }
+
+  function toggleReminder(minutes) {
+    setSelectedReminders((prev) =>
+      prev.includes(minutes) ? prev.filter((m) => m !== minutes) : [...prev, minutes]
     )
   }
 
@@ -73,7 +92,7 @@ function TaskForm({ onSubmit, editingTask, onCancelEdit }) {
       recurrence_rule: recurrenceRule,
     }
 
-    const { error } = await onSubmit(taskData, editingTask?.id)
+    const { error } = await onSubmit(taskData, editingTask?.id, selectedReminders)
 
     if (!error) resetForm()
   }
@@ -178,6 +197,26 @@ function TaskForm({ onSubmit, editingTask, onCancelEdit }) {
           ))}
         </div>
       )}
+
+      <div>
+        <label className="text-sm text-slate-300 block mb-1">Remind me</label>
+        <div className="flex flex-wrap gap-1">
+          {REMINDER_OPTIONS.map((opt) => (
+            <button
+              key={opt.minutes}
+              type="button"
+              onClick={() => toggleReminder(opt.minutes)}
+              className={`text-xs px-2 py-1 rounded ${
+                selectedReminders.includes(opt.minutes)
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-slate-700 text-slate-300'
+              }`}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      </div>
 
       <div className="flex gap-2">
         <button

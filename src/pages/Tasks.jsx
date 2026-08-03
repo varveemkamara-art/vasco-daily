@@ -7,16 +7,15 @@ function Tasks({ occurrences, addTask, updateTask, deleteTask, toggleOccurrence 
   const [searchTerm, setSearchTerm] = useState('')
   const [filter, setFilter] = useState('all')
 
-  async function handleFormSubmit(taskData, taskId) {
+  async function handleFormSubmit(taskData, taskId, reminderMinutes) {
     if (taskId) {
-      const result = await updateTask(taskId, taskData)
+      const result = await updateTask(taskId, taskData, reminderMinutes)
       setEditingTask(null)
       return result
     } else {
-      return await addTask(taskData)
+      return await addTask(taskData, null, reminderMinutes)
     }
   }
-
   const today = new Date().toISOString().split('T')[0]
 
   const filteredOccurrences = occurrences

@@ -7,6 +7,7 @@ export function useTasks() {
   const { user } = useAuth()
   const [tasks, setTasks] = useState([])
   const [completions, setCompletions] = useState([])
+  const [reminders, setReminders] = useState([])
   const [loading, setLoading] = useState(true)
 
   async function fetchTasks() {
@@ -22,8 +23,13 @@ export function useTasks() {
       .from('task_completions')
       .select('*')
 
+    const { data: reminderData, error: reminderError } = await supabase
+      .from('reminders')
+      .select('*')
+
     if (!taskError) setTasks(taskData)
     if (!completionError) setCompletions(completionData)
+    if (!reminderError) setReminders(reminderData)
     setLoading(false)
   }
 
@@ -31,8 +37,16 @@ export function useTasks() {
     if (user) fetchTasks()
   }, [user])
 
+  // Attach each task's reminder minute offsets, for the form to display
+  const tasksWithReminders = tasks.map((task) => ({
+    ...task,
+    reminderMinutes: reminders
+      .filter((r) => r.task_id === task.id)
+      .map((r) => r.minutes_before),
+  }))
+
   // Expand recurring tasks into individual occurrences for display
-  const occurrences = tasks.flatMap((task) => {
+  const occurrences = tasksWithReminders.flatMap((task) => {
     const dates = getOccurrences(task)
     return dates.map((occDate) => {
       const isCompleted = task.is_recurring
@@ -44,29 +58,52 @@ export function useTasks() {
       return {
         ...task,
         occurrenceDate: occDate,
-        // A stable unique key for React lists
         occurrenceId: `${task.id}_${occDate}`,
         isCompleted,
       }
     })
   })
 
-  async function addTask(task) {
-    const { error } = await supabase
+  async function saveReminders(taskId, minutesArray) {
+    // Simplest reliable approach: remove old reminders for this task, then insert the current selection
+    await supabase.from('reminders').delete().eq('task_id', taskId)
+
+    if (minutesArray.length > 0) {
+      const rows = minutesArray.map((minutes_before) => ({
+        task_id: taskId,
+        user_id: user.id,
+        minutes_before,
+      }))
+      await supabase.from('reminders').insert(rows)
+    }
+  }
+
+  async function addTask(task, _unusedId, reminderMinutes = []) {
+    const { data, error } = await supabase
       .from('tasks')
       .insert([{ ...task, user_id: user.id }])
+      .select()
+      .single()
 
-    if (!error) fetchTasks()
+    if (!error && data) {
+      await saveReminders(data.id, reminderMinutes)
+    }
+
+    await fetchTasks()
     return { error }
   }
 
-  async function updateTask(id, updates) {
+  async function updateTask(id, updates, reminderMinutes = null) {
     const { error } = await supabase
       .from('tasks')
       .update(updates)
       .eq('id', id)
 
-    if (!error) fetchTasks()
+    if (!error && reminderMinutes !== null) {
+      await saveReminders(id, reminderMinutes)
+    }
+
+    await fetchTasks()
     return { error }
   }
 
@@ -78,13 +115,11 @@ export function useTasks() {
 
   async function toggleOccurrence(task, occurrenceDate) {
     if (!task.is_recurring) {
-      // Simple one-time task: just flip its status
       return updateTask(task.id, {
         status: task.status === 'completed' ? 'pending' : 'completed',
       })
     }
 
-    // Recurring task: check if this specific date is already completed
     const existing = completions.find(
       (c) => c.task_id === task.id && c.completed_date === occurrenceDate
     )
@@ -110,7 +145,7 @@ export function useTasks() {
   }
 
   return {
-    tasks,
+    tasks: tasksWithReminders,
     occurrences,
     loading,
     addTask,
