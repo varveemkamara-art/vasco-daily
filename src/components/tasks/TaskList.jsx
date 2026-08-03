@@ -1,5 +1,5 @@
-function TaskList({ tasks, onToggleComplete, onDelete, onEdit }) {
-  if (tasks.length === 0) {
+function TaskList({ occurrences, onToggleComplete, onDelete, onEdit }) {
+  if (occurrences.length === 0) {
     return <p className="text-slate-400">No tasks yet. Add one above!</p>
   }
 
@@ -12,40 +12,43 @@ function TaskList({ tasks, onToggleComplete, onDelete, onEdit }) {
 
   return (
     <div className="space-y-2">
-      {tasks.map((task) => (
+      {occurrences.map((occ) => (
         <div
-          key={task.id}
+          key={occ.occurrenceId}
           className="bg-slate-800 p-3 rounded-lg flex items-center justify-between gap-3"
         >
           <div className="flex items-center gap-3">
             <input
               type="checkbox"
-              checked={task.status === 'completed'}
-              onChange={() => onToggleComplete(task)}
+              checked={occ.isCompleted}
+              onChange={() => onToggleComplete(occ, occ.occurrenceDate)}
               className="w-5 h-5"
             />
-            <div onClick={() => onEdit(task)} className="cursor-pointer">
+            <div onClick={() => onEdit(occ)} className="cursor-pointer">
               <p
                 className={`text-white ${
-                  task.status === 'completed' ? 'line-through text-slate-500' : ''
+                  occ.isCompleted ? 'line-through text-slate-500' : ''
                 }`}
               >
-                {task.title}
+                {occ.title}
+                {occ.is_recurring && (
+                  <span className="text-xs text-slate-400 ml-2">(repeats)</span>
+                )}
               </p>
               <p className="text-xs text-slate-400">
-                {task.date} {task.start_time || ''}
+                {occ.occurrenceDate} {occ.start_time || ''}
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
             <span
-              className={`text-xs text-white px-2 py-1 rounded ${priorityColors[task.priority]}`}
+              className={`text-xs text-white px-2 py-1 rounded ${priorityColors[occ.priority]}`}
             >
-              {task.priority}
+              {occ.priority}
             </span>
             <button
-              onClick={() => onDelete(task.id)}
+              onClick={() => onDelete(occ.id)}
               className="text-red-400 hover:text-red-300 text-sm"
             >
               Delete

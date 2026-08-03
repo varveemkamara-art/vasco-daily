@@ -7,19 +7,13 @@ import TaskList from './components/tasks/TaskList'
 
 function App() {
   const { user, signOut } = useAuth()
-  const { tasks, loading, addTask, updateTask, deleteTask } = useTasks()
+  const { occurrences, loading, addTask, updateTask, deleteTask, toggleOccurrence } = useTasks()
   const [editingTask, setEditingTask] = useState(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [filter, setFilter] = useState('all')
 
   if (!user) {
     return <Login />
-  }
-
-  function handleToggleComplete(task) {
-    updateTask(task.id, {
-      status: task.status === 'completed' ? 'pending' : 'completed',
-    })
   }
 
   async function handleFormSubmit(taskData, taskId) {
@@ -34,19 +28,20 @@ function App() {
 
   const today = new Date().toISOString().split('T')[0]
 
-  const filteredTasks = tasks
-    .filter((task) =>
-      task.title.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredOccurrences = occurrences
+    .filter((occ) =>
+      occ.title.toLowerCase().includes(searchTerm.toLowerCase())
     )
-    .filter((task) => {
-      if (filter === 'today') return task.date === today
-      if (filter === 'completed') return task.status === 'completed'
+    .filter((occ) => {
+      if (filter === 'today') return occ.occurrenceDate === today
+      if (filter === 'completed') return occ.isCompleted
       if (filter === 'overdue')
-        return task.date < today && task.status !== 'completed'
+        return occ.occurrenceDate < today && !occ.isCompleted
       if (filter === 'upcoming')
-        return task.date > today && task.status !== 'completed'
+        return occ.occurrenceDate > today && !occ.isCompleted
       return true
     })
+    .sort((a, b) => a.occurrenceDate.localeCompare(b.occurrenceDate))
 
   const filters = [
     { key: 'all', label: 'All' },
@@ -103,8 +98,8 @@ function App() {
           <p className="text-slate-400">Loading tasks...</p>
         ) : (
           <TaskList
-            tasks={filteredTasks}
-            onToggleComplete={handleToggleComplete}
+            occurrences={filteredOccurrences}
+            onToggleComplete={toggleOccurrence}
             onDelete={deleteTask}
             onEdit={setEditingTask}
           />

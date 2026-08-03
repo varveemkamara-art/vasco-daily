@@ -9,6 +9,8 @@ function TaskForm({ onSubmit, editingTask, onCancelEdit }) {
   const [startTime, setStartTime] = useState('')
   const [priority, setPriority] = useState('medium')
   const [categoryId, setCategoryId] = useState('')
+  const [recurrence, setRecurrence] = useState('none')
+  const [customDays, setCustomDays] = useState([])
 
   useEffect(() => {
     if (editingTask) {
@@ -18,6 +20,18 @@ function TaskForm({ onSubmit, editingTask, onCancelEdit }) {
       setStartTime(editingTask.start_time || '')
       setPriority(editingTask.priority || 'medium')
       setCategoryId(editingTask.category_id || '')
+
+      if (editingTask.recurrence_rule) {
+        const rule = editingTask.recurrence_rule
+        if (rule.startsWith('weekly:')) {
+          setRecurrence('weekly')
+          setCustomDays(rule.replace('weekly:', '').split(',').map(Number))
+        } else {
+          setRecurrence(rule)
+        }
+      } else {
+        setRecurrence('none')
+      }
     }
   }, [editingTask])
 
@@ -28,10 +42,26 @@ function TaskForm({ onSubmit, editingTask, onCancelEdit }) {
     setStartTime('')
     setPriority('medium')
     setCategoryId('')
+    setRecurrence('none')
+    setCustomDays([])
+  }
+
+  function toggleDay(day) {
+    setCustomDays((prev) =>
+      prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]
+    )
   }
 
   async function handleSubmit(e) {
     e.preventDefault()
+
+    let recurrenceRule = null
+    if (recurrence === 'weekly') {
+      recurrenceRule = `weekly:${customDays.sort().join(',')}`
+    } else if (recurrence !== 'none') {
+      recurrenceRule = recurrence
+    }
+
     const taskData = {
       title,
       description,
@@ -39,12 +69,16 @@ function TaskForm({ onSubmit, editingTask, onCancelEdit }) {
       start_time: startTime || null,
       priority,
       category_id: categoryId || null,
+      is_recurring: recurrence !== 'none',
+      recurrence_rule: recurrenceRule,
     }
 
     const { error } = await onSubmit(taskData, editingTask?.id)
 
     if (!error) resetForm()
   }
+
+  const dayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
   return (
     <form onSubmit={handleSubmit} className="bg-slate-800 p-4 rounded-lg space-y-3">
@@ -109,6 +143,41 @@ function TaskForm({ onSubmit, editingTask, onCancelEdit }) {
           ))}
         </select>
       </div>
+
+      <div>
+        <label className="text-sm text-slate-300 block mb-1">Repeat</label>
+        <select
+          value={recurrence}
+          onChange={(e) => setRecurrence(e.target.value)}
+          className="w-full p-2 rounded bg-slate-700 text-white outline-none"
+        >
+          <option value="none">One-time (no repeat)</option>
+          <option value="daily">Every day</option>
+          <option value="weekdays">Every weekday</option>
+          <option value="weekly">Specific days of the week</option>
+          <option value="monthly">Every month</option>
+          <option value="yearly">Every year</option>
+        </select>
+      </div>
+
+      {recurrence === 'weekly' && (
+        <div className="flex gap-1 flex-wrap">
+          {dayLabels.map((label, index) => (
+            <button
+              key={index}
+              type="button"
+              onClick={() => toggleDay(index)}
+              className={`text-xs px-2 py-1 rounded ${
+                customDays.includes(index)
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-slate-700 text-slate-300'
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      )}
 
       <div className="flex gap-2">
         <button
