@@ -8,6 +8,7 @@ import Calendar from './pages/Calendar'
 import Settings from './pages/Settings'
 import { useReminderChecker } from './hooks/useReminderChecker'
 import { useSettings } from './hooks/useSettings'
+import { useProfile } from './hooks/useProfile'
 import Statistics from './pages/Statistics'
 import Nav from './components/layout/Nav'
 
@@ -15,6 +16,7 @@ function App() {
   const { user, signOut } = useAuth()
   const { occurrences, loading, addTask, updateTask, deleteTask, toggleOccurrence } = useTasks()
   const { settings } = useSettings()
+  const { profile } = useProfile()
   useReminderChecker(occurrences, settings.browser_notifications_enabled)
   const [page, setPage] = useState('dashboard')
 
@@ -42,7 +44,11 @@ function App() {
         ) : (
           <>
             {page === 'dashboard' && (
-              <Dashboard occurrences={occurrences} userEmail={user.email} />
+              <Dashboard
+                occurrences={occurrences}
+                userEmail={user.email}
+                fullName={profile.full_name}
+              />
             )}
             {page === 'tasks' && (
               <Tasks

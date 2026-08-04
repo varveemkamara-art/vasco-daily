@@ -1,4 +1,4 @@
-function Dashboard({ occurrences, userEmail }) {
+function Dashboard({ occurrences, userEmail, fullName }) {
   const now = new Date()
   const hour = now.getHours()
   const greeting =
@@ -22,7 +22,7 @@ function Dashboard({ occurrences, userEmail }) {
     <div className="space-y-4">
       <div className="bg-slate-800 p-4 rounded-lg">
         <h2 className="text-lg font-semibold text-white">
-          {greeting}, {userEmail.split('@')[0]}
+          {greeting}, {fullName || userEmail.split('@')[0]}
         </h2>
         <p className="text-sm text-slate-400">
           {now.toLocaleDateString(undefined, {
