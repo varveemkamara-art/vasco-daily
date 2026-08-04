@@ -98,10 +98,12 @@ function TaskForm({ onSubmit, editingTask, onCancelEdit }) {
   }
 
   const dayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+  const inputClass =
+    'w-full p-2 rounded bg-gray-100 dark:bg-slate-700 text-slate-900 dark:text-white outline-none'
 
   return (
-    <form onSubmit={handleSubmit} className="bg-slate-800 p-4 rounded-lg space-y-3">
-      <h2 className="text-lg font-semibold text-white">
+    <form onSubmit={handleSubmit} className="bg-white dark:bg-slate-800 p-4 rounded-lg space-y-3">
+      <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
         {editingTask ? 'Edit Task' : 'Add a Task'}
       </h2>
 
@@ -111,14 +113,14 @@ function TaskForm({ onSubmit, editingTask, onCancelEdit }) {
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         required
-        className="w-full p-2 rounded bg-slate-700 text-white outline-none"
+        className={inputClass}
       />
 
       <textarea
         placeholder="Description (optional)"
         value={description}
         onChange={(e) => setDescription(e.target.value)}
-        className="w-full p-2 rounded bg-slate-700 text-white outline-none"
+        className={inputClass}
       />
 
       <div className="flex gap-2">
@@ -127,13 +129,13 @@ function TaskForm({ onSubmit, editingTask, onCancelEdit }) {
           value={date}
           onChange={(e) => setDate(e.target.value)}
           required
-          className="flex-1 p-2 rounded bg-slate-700 text-white outline-none"
+          className={`flex-1 ${inputClass}`}
         />
         <input
           type="time"
           value={startTime}
           onChange={(e) => setStartTime(e.target.value)}
-          className="flex-1 p-2 rounded bg-slate-700 text-white outline-none"
+          className={`flex-1 ${inputClass}`}
         />
       </div>
 
@@ -141,7 +143,7 @@ function TaskForm({ onSubmit, editingTask, onCancelEdit }) {
         <select
           value={priority}
           onChange={(e) => setPriority(e.target.value)}
-          className="flex-1 p-2 rounded bg-slate-700 text-white outline-none"
+          className={`flex-1 ${inputClass}`}
         >
           <option value="low">Low</option>
           <option value="medium">Medium</option>
@@ -152,7 +154,7 @@ function TaskForm({ onSubmit, editingTask, onCancelEdit }) {
         <select
           value={categoryId}
           onChange={(e) => setCategoryId(e.target.value)}
-          className="flex-1 p-2 rounded bg-slate-700 text-white outline-none"
+          className={`flex-1 ${inputClass}`}
         >
           <option value="">No category</option>
           {categories.map((cat) => (
@@ -164,11 +166,11 @@ function TaskForm({ onSubmit, editingTask, onCancelEdit }) {
       </div>
 
       <div>
-        <label className="text-sm text-slate-300 block mb-1">Repeat</label>
+        <label className="text-sm text-slate-600 dark:text-slate-300 block mb-1">Repeat</label>
         <select
           value={recurrence}
           onChange={(e) => setRecurrence(e.target.value)}
-          className="w-full p-2 rounded bg-slate-700 text-white outline-none"
+          className={inputClass}
         >
           <option value="none">One-time (no repeat)</option>
           <option value="daily">Every day</option>
@@ -189,7 +191,7 @@ function TaskForm({ onSubmit, editingTask, onCancelEdit }) {
               className={`text-xs px-2 py-1 rounded ${
                 customDays.includes(index)
                   ? 'bg-blue-600 text-white'
-                  : 'bg-slate-700 text-slate-300'
+                  : 'bg-gray-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
               }`}
             >
               {label}
@@ -199,7 +201,7 @@ function TaskForm({ onSubmit, editingTask, onCancelEdit }) {
       )}
 
       <div>
-        <label className="text-sm text-slate-300 block mb-1">Remind me</label>
+        <label className="text-sm text-slate-600 dark:text-slate-300 block mb-1">Remind me</label>
         <div className="flex flex-wrap gap-1">
           {REMINDER_OPTIONS.map((opt) => (
             <button
@@ -209,7 +211,7 @@ function TaskForm({ onSubmit, editingTask, onCancelEdit }) {
               className={`text-xs px-2 py-1 rounded ${
                 selectedReminders.includes(opt.minutes)
                   ? 'bg-blue-600 text-white'
-                  : 'bg-slate-700 text-slate-300'
+                  : 'bg-gray-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
               }`}
             >
               {opt.label}
@@ -232,7 +234,7 @@ function TaskForm({ onSubmit, editingTask, onCancelEdit }) {
               resetForm()
               onCancelEdit()
             }}
-            className="flex-1 bg-slate-600 hover:bg-slate-700 text-white p-2 rounded"
+            className="flex-1 bg-gray-300 dark:bg-slate-600 hover:bg-gray-400 dark:hover:bg-slate-700 text-slate-900 dark:text-white p-2 rounded"
           >
             Cancel
           </button>

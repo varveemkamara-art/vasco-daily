@@ -17,12 +17,12 @@ function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-900 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gray-100 dark:bg-slate-900 flex items-center justify-center px-4">
       <form
         onSubmit={handleSubmit}
-        className="bg-slate-800 p-8 rounded-lg w-full max-w-sm space-y-4"
+        className="bg-white dark:bg-slate-800 p-8 rounded-lg w-full max-w-sm space-y-4"
       >
-        <h1 className="text-2xl font-bold text-white mb-4">
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
           Log in to Vasco
         </h1>
 
@@ -32,7 +32,7 @@ function Login() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          className="w-full p-2 rounded bg-slate-700 text-white outline-none"
+          className="w-full p-2 rounded bg-gray-100 dark:bg-slate-700 text-slate-900 dark:text-white outline-none"
         />
 
         <input
@@ -41,7 +41,7 @@ function Login() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
-          className="w-full p-2 rounded bg-slate-700 text-white outline-none"
+          className="w-full p-2 rounded bg-gray-100 dark:bg-slate-700 text-slate-900 dark:text-white outline-none"
         />
 
         <button
@@ -51,7 +51,7 @@ function Login() {
           Log In
         </button>
 
-        {message && <p className="text-sm text-red-400">{message}</p>}
+        {message && <p className="text-sm text-red-500 dark:text-red-400">{message}</p>}
       </form>
     </div>
   )

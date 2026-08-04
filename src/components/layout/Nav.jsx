@@ -8,7 +8,7 @@ function Nav({ currentPage, onNavigate }) {
   ]
 
   return (
-    <div className="flex gap-2 bg-slate-800 p-2 rounded-lg">
+    <div className="flex gap-2 bg-white dark:bg-slate-800 p-2 rounded-lg">
       {pages.map((p) => (
         <button
           key={p.key}
@@ -16,7 +16,7 @@ function Nav({ currentPage, onNavigate }) {
           className={`flex-1 text-sm py-2 rounded ${
             currentPage === p.key
               ? 'bg-blue-600 text-white'
-              : 'text-slate-300'
+              : 'text-slate-600 dark:text-slate-300'
           }`}
         >
           {p.label}

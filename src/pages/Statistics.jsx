@@ -37,7 +37,6 @@ function Statistics({ occurrences }) {
     (o) => o.occurrenceDate < todayStr && !o.isCompleted
   ).length
 
-  // Most productive day of week (based on completed occurrences)
   const dayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
   const dayCounts = [0, 0, 0, 0, 0, 0, 0]
   pastOccurrences
@@ -50,7 +49,6 @@ function Statistics({ occurrences }) {
   const mostProductiveDay =
     maxDayCount === 0 ? 'Not enough data yet' : dayLabels[dayCounts.indexOf(maxDayCount)]
 
-  // Most used category
   const categoryCounts = {}
   occurrences.forEach((o) => {
     if (o.category_id) {
@@ -70,48 +68,48 @@ function Statistics({ occurrences }) {
         <StatCard label="Completed Today" value={completedToday} />
         <StatCard label="Completed This Week" value={completedThisWeek} />
         <StatCard label="Completed This Month" value={completedThisMonth} />
-        <StatCard label="Overdue" value={overdueCount} accent="text-red-400" />
+        <StatCard label="Overdue" value={overdueCount} accent="text-red-500 dark:text-red-400" />
       </div>
 
-      <div className="bg-slate-800 p-4 rounded-lg">
-        <p className="text-sm text-slate-300 mb-2">Overall Completion Rate</p>
-        <div className="w-full bg-slate-700 rounded-full h-3">
+      <div className="bg-white dark:bg-slate-800 p-4 rounded-lg">
+        <p className="text-sm text-slate-600 dark:text-slate-300 mb-2">Overall Completion Rate</p>
+        <div className="w-full bg-gray-200 dark:bg-slate-700 rounded-full h-3">
           <div
             className="bg-green-600 h-3 rounded-full transition-all"
             style={{ width: `${completionPercent}%` }}
           />
         </div>
-        <p className="text-xs text-slate-400 mt-2">
+        <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
           {totalCompleted} of {totalPast} past tasks completed ({completionPercent}%)
         </p>
       </div>
 
-      <div className="bg-slate-800 p-4 rounded-lg">
-        <p className="text-sm text-slate-300 mb-3">Completions by Day of Week</p>
+      <div className="bg-white dark:bg-slate-800 p-4 rounded-lg">
+        <p className="text-sm text-slate-600 dark:text-slate-300 mb-3">Completions by Day of Week</p>
         <div className="space-y-2">
           {dayLabels.map((label, i) => (
             <div key={label} className="flex items-center gap-2">
-              <span className="text-xs text-slate-400 w-8">{label}</span>
-              <div className="flex-1 bg-slate-700 rounded-full h-2">
+              <span className="text-xs text-slate-500 dark:text-slate-400 w-8">{label}</span>
+              <div className="flex-1 bg-gray-200 dark:bg-slate-700 rounded-full h-2">
                 <div
                   className="bg-blue-600 h-2 rounded-full"
                   style={{ width: `${(dayCounts[i] / maxDayBarValue) * 100}%` }}
                 />
               </div>
-              <span className="text-xs text-slate-400 w-6 text-right">{dayCounts[i]}</span>
+              <span className="text-xs text-slate-500 dark:text-slate-400 w-6 text-right">{dayCounts[i]}</span>
             </div>
           ))}
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <div className="bg-slate-800 p-4 rounded-lg">
-          <p className="text-xs text-slate-400">Most Productive Day</p>
-          <p className="text-lg font-semibold text-white">{mostProductiveDay}</p>
+        <div className="bg-white dark:bg-slate-800 p-4 rounded-lg">
+          <p className="text-xs text-slate-500 dark:text-slate-400">Most Productive Day</p>
+          <p className="text-lg font-semibold text-slate-900 dark:text-white">{mostProductiveDay}</p>
         </div>
-        <div className="bg-slate-800 p-4 rounded-lg">
-          <p className="text-xs text-slate-400">Most Used Category</p>
-          <p className="text-lg font-semibold text-white">
+        <div className="bg-white dark:bg-slate-800 p-4 rounded-lg">
+          <p className="text-xs text-slate-500 dark:text-slate-400">Most Used Category</p>
+          <p className="text-lg font-semibold text-slate-900 dark:text-white">
             {topCategory ? topCategory.name : 'None yet'}
           </p>
         </div>
@@ -120,11 +118,11 @@ function Statistics({ occurrences }) {
   )
 }
 
-function StatCard({ label, value, accent = 'text-white' }) {
+function StatCard({ label, value, accent = 'text-slate-900 dark:text-white' }) {
   return (
-    <div className="bg-slate-800 p-4 rounded-lg text-center">
+    <div className="bg-white dark:bg-slate-800 p-4 rounded-lg text-center">
       <p className={`text-2xl font-bold ${accent}`}>{value}</p>
-      <p className="text-xs text-slate-400">{label}</p>
+      <p className="text-xs text-slate-500 dark:text-slate-400">{label}</p>
     </div>
   )
 }

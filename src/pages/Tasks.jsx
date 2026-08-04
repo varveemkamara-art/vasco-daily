@@ -54,7 +54,7 @@ function Tasks({ occurrences, addTask, updateTask, deleteTask, toggleOccurrence 
         placeholder="Search tasks..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        className="w-full p-2 rounded bg-slate-800 text-white outline-none"
+        className="w-full p-2 rounded bg-white dark:bg-slate-800 text-slate-900 dark:text-white outline-none"
       />
 
       <div className="flex gap-2 flex-wrap">
@@ -62,10 +62,10 @@ function Tasks({ occurrences, addTask, updateTask, deleteTask, toggleOccurrence 
           <button
             key={f.key}
             onClick={() => setFilter(f.key)}
-            className={`text-sm px-3 py-1 rounded ${
+           className={`text-sm px-3 py-1 rounded ${
               filter === f.key
                 ? 'bg-blue-600 text-white'
-                : 'bg-slate-800 text-slate-300'
+                : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300'
             }`}
           >
             {f.label}

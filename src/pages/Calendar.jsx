@@ -49,18 +49,18 @@ function Calendar({ occurrences, onToggleComplete, onDelete, onEdit }) {
 
   return (
     <div className="space-y-4">
-      <div className="bg-slate-800 p-4 rounded-lg">
+      <div className="bg-white dark:bg-slate-800 p-4 rounded-lg">
         <div className="flex items-center justify-between mb-3">
-          <button onClick={goToPrevMonth} className="text-slate-300 px-2">
+          <button onClick={goToPrevMonth} className="text-slate-600 dark:text-slate-300 px-2">
             ←
           </button>
-          <h2 className="text-white font-semibold">{monthName}</h2>
-          <button onClick={goToNextMonth} className="text-slate-300 px-2">
+          <h2 className="text-slate-900 dark:text-white font-semibold">{monthName}</h2>
+          <button onClick={goToNextMonth} className="text-slate-600 dark:text-slate-300 px-2">
             →
           </button>
         </div>
 
-        <div className="grid grid-cols-7 gap-1 text-center text-xs text-slate-400 mb-1">
+        <div className="grid grid-cols-7 gap-1 text-center text-xs text-slate-500 dark:text-slate-400 mb-1">
           {dayLabels.map((d) => (
             <div key={d}>{d}</div>
           ))}
@@ -83,8 +83,8 @@ function Calendar({ occurrences, onToggleComplete, onDelete, onEdit }) {
                   isSelected
                     ? 'bg-blue-600 text-white'
                     : isToday
-                    ? 'bg-slate-600 text-white'
-                    : 'text-slate-300 hover:bg-slate-700'
+                    ? 'bg-gray-200 dark:bg-slate-600 text-slate-900 dark:text-white'
+                    : 'text-slate-600 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-700'
                 }`}
               >
                 {day}
@@ -98,7 +98,7 @@ function Calendar({ occurrences, onToggleComplete, onDelete, onEdit }) {
       </div>
 
       <div>
-        <h3 className="text-sm font-semibold text-white mb-2">
+        <h3 className="text-sm font-semibold text-slate-900 dark:text-white mb-2">
           Tasks on {selectedDate}
         </h3>
         <TaskList

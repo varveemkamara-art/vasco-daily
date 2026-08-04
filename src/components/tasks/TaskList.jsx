@@ -1,10 +1,10 @@
 function TaskList({ occurrences, onToggleComplete, onDelete, onEdit }) {
   if (occurrences.length === 0) {
-    return <p className="text-slate-400">No tasks yet. Add one above!</p>
+    return <p className="text-slate-500 dark:text-slate-400">No tasks yet. Add one above!</p>
   }
 
   const priorityColors = {
-    low: 'bg-slate-600',
+    low: 'bg-slate-500 dark:bg-slate-600',
     medium: 'bg-blue-600',
     high: 'bg-orange-600',
     urgent: 'bg-red-600',
@@ -15,7 +15,7 @@ function TaskList({ occurrences, onToggleComplete, onDelete, onEdit }) {
       {occurrences.map((occ) => (
         <div
           key={occ.occurrenceId}
-          className="bg-slate-800 p-3 rounded-lg flex items-center justify-between gap-3"
+          className="bg-white dark:bg-slate-800 p-3 rounded-lg flex items-center justify-between gap-3"
         >
           <div className="flex items-center gap-3">
             <input
@@ -26,16 +26,16 @@ function TaskList({ occurrences, onToggleComplete, onDelete, onEdit }) {
             />
             <div onClick={() => onEdit(occ)} className="cursor-pointer">
               <p
-                className={`text-white ${
-                  occ.isCompleted ? 'line-through text-slate-500' : ''
+                className={`text-slate-900 dark:text-white ${
+                  occ.isCompleted ? 'line-through text-slate-400 dark:text-slate-500' : ''
                 }`}
               >
                 {occ.title}
                 {occ.is_recurring && (
-                  <span className="text-xs text-slate-400 ml-2">(repeats)</span>
+                  <span className="text-xs text-slate-500 dark:text-slate-400 ml-2">(repeats)</span>
                 )}
               </p>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-500 dark:text-slate-400">
                 {occ.occurrenceDate} {occ.start_time || ''}
               </p>
             </div>
@@ -49,7 +49,7 @@ function TaskList({ occurrences, onToggleComplete, onDelete, onEdit }) {
             </span>
             <button
               onClick={() => onDelete(occ.id)}
-              className="text-red-400 hover:text-red-300 text-sm"
+              className="text-red-500 dark:text-red-400 hover:text-red-600 dark:hover:text-red-300 text-sm"
             >
               Delete
             </button>
