@@ -8,6 +8,7 @@ import Calendar from './pages/Calendar'
 import Settings from './pages/Settings'
 import { useReminderChecker } from './hooks/useReminderChecker'
 import { useSettings } from './hooks/useSettings'
+import Statistics from './pages/Statistics'
 import Nav from './components/layout/Nav'
 
 function App() {
@@ -63,6 +64,7 @@ function App() {
               />
             )}
             {page === 'settings' && <Settings />}
+            {page === 'statistics' && <Statistics occurrences={occurrences} />}
           </>
         )}
       </div>
