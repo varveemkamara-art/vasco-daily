@@ -86,7 +86,7 @@ function App() {
         )}
       </div>
 
-      <AIAssistant occurrences={occurrences} userName={profile.full_name} />
+      <AIAssistant occurrences={occurrences} userName={profile.full_name} addTask={addTask} />
     </div>
   )
 }

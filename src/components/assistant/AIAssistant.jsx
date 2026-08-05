@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import { supabase } from '../../lib/supabaseClient'
 
-function AIAssistant({ occurrences, userName }) {
+function AIAssistant({ occurrences, userName, addTask }) {
   const [isOpen, setIsOpen] = useState(false)
   const [messages, setMessages] = useState([
-    { role: 'assistant', text: "Hi! I'm Vasco Assistant. Ask me anything about your tasks or day." },
+    { role: 'assistant', text: "Hi! I'm Vasco Assistant. Ask me anything about your tasks, or tell me to add one for you." },
   ])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
@@ -19,9 +19,6 @@ function AIAssistant({ occurrences, userName }) {
     setLoading(true)
 
     try {
-      const { data: sessionData } = await supabase.auth.getSession()
-      const token = sessionData?.session?.access_token
-
       const response = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-assistant`,
         {
@@ -40,8 +37,49 @@ function AIAssistant({ occurrences, userName }) {
 
       const data = await response.json()
       const rawReply = data.reply || data.error || 'Something went wrong.'
-      const replyText = rawReply.replace(/\*\*/g, '').replace(/^#+\s*/gm, '')
-      setMessages((prev) => [...prev, { role: 'assistant', text: replyText }])
+
+      // Check for a task-creation instruction embedded in the reply
+      const taskMatch = rawReply.match(/TASK_JSON:(\{.*\})/s)
+      let displayText = rawReply
+
+      if (taskMatch) {
+        displayText = rawReply.replace(/TASK_JSON:\{.*\}/s, '').trim()
+
+        try {
+          const taskData = JSON.parse(taskMatch[1])
+
+          let recurrenceRule = null
+          let isRecurring = false
+          if (taskData.recurrence && taskData.recurrence !== 'none') {
+            isRecurring = true
+            recurrenceRule = taskData.recurrence
+          }
+
+          const { error } = await addTask(
+            {
+              title: taskData.title,
+              description: '',
+              date: taskData.date,
+              start_time: taskData.start_time === 'null' ? null : taskData.start_time,
+              priority: taskData.priority || 'medium',
+              category_id: null,
+              is_recurring: isRecurring,
+              recurrence_rule: recurrenceRule,
+            },
+            null,
+            taskData.reminder_minutes || [0]
+          )
+
+          if (error) {
+            displayText += '\n\n(I tried to add that task, but something went wrong saving it.)'
+          }
+        } catch (parseErr) {
+          // If parsing fails, just show the text reply without crashing
+        }
+      }
+
+      const cleanText = displayText.replace(/\*\*/g, '').replace(/^#+\s*/gm, '')
+      setMessages((prev) => [...prev, { role: 'assistant', text: cleanText }])
     } catch (err) {
       setMessages((prev) => [
         ...prev,
@@ -54,14 +92,13 @@ function AIAssistant({ occurrences, userName }) {
 
   return (
     <>
-      {/* Floating button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="fixed bottom-4 right-4 bg-blue-600 hover:bg-blue-700 text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-2xl z-50 overflow-hidden"
       >
         {isOpen ? '×' : <img src="/icon-192.png" alt="Assistant" className="w-full h-full object-cover" />}
       </button>
-      {/* Chat window */}
+
       {isOpen && (
         <div className="fixed bottom-20 right-4 w-80 max-w-[90vw] h-96 bg-white dark:bg-slate-800 rounded-lg shadow-xl flex flex-col z-50 border border-gray-200 dark:border-slate-700">
           <div className="p-3 border-b border-gray-200 dark:border-slate-700">
@@ -79,7 +116,7 @@ function AIAssistant({ occurrences, userName }) {
                     ? 'bg-blue-600 text-white ml-auto'
                     : 'bg-gray-100 dark:bg-slate-700 text-slate-900 dark:text-white'
                 }`}
-             >
+              >
                 {msg.text.split('\n').map((line, idx) => (
                   <p key={idx} className={line.trim() === '' ? 'h-2' : 'mb-1'}>
                     {line}
