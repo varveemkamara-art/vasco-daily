@@ -11,6 +11,7 @@ import { useReminderChecker } from './hooks/useReminderChecker'
 import { useSettings } from './hooks/useSettings'
 import { useProfile } from './hooks/useProfile'
 import Statistics from './pages/Statistics'
+import AIAssistant from './components/assistant/AIAssistant'
 import Nav from './components/layout/Nav'
 
 function App() {
@@ -84,6 +85,8 @@ function App() {
           </>
         )}
       </div>
+
+      <AIAssistant occurrences={occurrences} userName={profile.full_name} />
     </div>
   )
 }
