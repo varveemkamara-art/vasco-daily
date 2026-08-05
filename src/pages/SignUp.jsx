@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
 
-function SignUp() {
+function SignUp({ onSwitchToLogin }) {
   const { signUp } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -14,17 +14,17 @@ function SignUp() {
     if (error) {
       setMessage(error.message)
     } else {
-      setMessage('Success! Check your email to confirm your account.')
+      setMessage('Success! You can now log in.')
     }
   }
 
   return (
-    <div className="min-h-screen bg-slate-900 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gray-100 dark:bg-slate-900 flex items-center justify-center px-4">
       <form
         onSubmit={handleSubmit}
-        className="bg-slate-800 p-8 rounded-lg w-full max-w-sm space-y-4"
+        className="bg-white dark:bg-slate-800 p-8 rounded-lg w-full max-w-sm space-y-4"
       >
-        <h1 className="text-2xl font-bold text-white mb-4">
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
           Create your account
         </h1>
 
@@ -34,7 +34,7 @@ function SignUp() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          className="w-full p-2 rounded bg-slate-700 text-white outline-none"
+          className="w-full p-2 rounded bg-gray-100 dark:bg-slate-700 text-slate-900 dark:text-white outline-none"
         />
 
         <input
@@ -44,7 +44,7 @@ function SignUp() {
           onChange={(e) => setPassword(e.target.value)}
           required
           minLength={6}
-          className="w-full p-2 rounded bg-slate-700 text-white outline-none"
+          className="w-full p-2 rounded bg-gray-100 dark:bg-slate-700 text-slate-900 dark:text-white outline-none"
         />
 
         <button
@@ -54,7 +54,18 @@ function SignUp() {
           Sign Up
         </button>
 
-        {message && <p className="text-sm text-yellow-400">{message}</p>}
+        {message && <p className="text-sm text-yellow-600 dark:text-yellow-400">{message}</p>}
+
+        <p className="text-sm text-slate-500 dark:text-slate-400 text-center">
+          Already have an account?{' '}
+          <button
+            type="button"
+            onClick={onSwitchToLogin}
+            className="text-blue-600 dark:text-blue-400 hover:underline"
+          >
+            Log in
+          </button>
+        </p>
       </form>
     </div>
   )

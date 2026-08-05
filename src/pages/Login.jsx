@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
 
-function Login() {
+function Login({ onSwitchToSignUp }) {
   const { signIn } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -52,6 +52,17 @@ function Login() {
         </button>
 
         {message && <p className="text-sm text-red-500 dark:text-red-400">{message}</p>}
+
+        <p className="text-sm text-slate-500 dark:text-slate-400 text-center">
+          Don't have an account?{' '}
+          <button
+            type="button"
+            onClick={onSwitchToSignUp}
+            className="text-blue-600 dark:text-blue-400 hover:underline"
+          >
+            Sign up
+          </button>
+        </p>
       </form>
     </div>
   )

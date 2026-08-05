@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useAuth } from './context/AuthContext'
 import { useTasks } from './hooks/useTasks'
 import Login from './pages/Login'
+import SignUp from './pages/SignUp'
 import Dashboard from './pages/Dashboard'
 import Tasks from './pages/Tasks'
 import Calendar from './pages/Calendar'
@@ -23,9 +24,14 @@ function App() {
     document.documentElement.classList.toggle('dark', settings.theme !== 'light')
   }, [settings.theme])
   const [page, setPage] = useState('dashboard')
+  const [authView, setAuthView] = useState('login')
 
   if (!user) {
-    return <Login />
+    return authView === 'login' ? (
+      <Login onSwitchToSignUp={() => setAuthView('signup')} />
+    ) : (
+      <SignUp onSwitchToLogin={() => setAuthView('login')} />
+    )
   }
 
   return (
